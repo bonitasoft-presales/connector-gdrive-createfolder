@@ -68,25 +68,36 @@ public class GdriveConnector extends AbstractConnector {
     protected void executeBusinessLogic() throws ConnectorException {
         LOGGER.info(String.format("Default input: %s", getInputParameter(DEFAULT_INPUT)));
         setOutputParameter(DEFAULT_OUTPUT, String.format("%s - output", getInputParameter(DEFAULT_INPUT)));
-        FileList result = null;
-        try {
-            result = service.files().list()
-                    .setPageSize(10)
-                    .setFields("nextPageToken, files(id, name)")
+//       FileList result = null;
+//        try {
+//            result = service.files().list()
+//                    .setPageSize(10)
+//                    .setFields("nextPageToken, files(id, name)")
+//                    .execute();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        List<File> files = result.getFiles();
+//        if (files == null || files.isEmpty()) {
+//            System.out.println("No files found.");
+//        } else {
+//            System.out.println("Files:");
+//            for (File file : files) {
+//                System.out.printf("%s (%s)\n", file.getName(), file.getId());
+//            }
+//        }
+        File fileMetadata = new File();
+        fileMetadata.setName("Connector Test");
+        fileMetadata.setMimeType("application/vnd.google-apps.folder");
+
+       try {
+            File file = service.files().create(fileMetadata)
+                    .setFields("id")
                     .execute();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        List<File> files = result.getFiles();
-        if (files == null || files.isEmpty()) {
-            System.out.println("No files found.");
-        } else {
-            System.out.println("Files:");
-            for (File file : files) {
-                System.out.printf("%s (%s)\n", file.getName(), file.getId());
-            }
-        }
-
+        //System.out.println("Folder ID: " + file.getId());
     }
 
 
@@ -101,13 +112,13 @@ public class GdriveConnector extends AbstractConnector {
         /**
          * Directory to store authorization tokens for this application.
          */
-        private static final String TOKENS_DIRECTORY_PATH = "/resources";
+        private static final String TOKENS_DIRECTORY_PATH = "/tokens";
 
         /**
          * Global instance of the scopes required by this quickstart.
          * If modifying these scopes, delete your previously saved tokens/ folder.
          */
-        private static final List<String> SCOPES = Collections.singletonList(DriveScopes.DRIVE_METADATA_READONLY);
+        private static final List<String> SCOPES = Collections.singletonList(DriveScopes.DRIVE);
         private static final String CREDENTIALS_FILE_PATH = "/credentials.json";
 
         /**
